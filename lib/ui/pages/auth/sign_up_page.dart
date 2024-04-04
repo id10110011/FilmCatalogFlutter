@@ -1,5 +1,6 @@
 import 'package:film_catalog_flutter/models/user.dart';
 import 'package:film_catalog_flutter/services/auth_service.dart';
+import 'package:film_catalog_flutter/services/favorites_service.dart';
 import 'package:film_catalog_flutter/services/user_service.dart';
 import 'package:film_catalog_flutter/ui/pages/auth/login_page.dart';
 import 'package:film_catalog_flutter/ui/pages/home_page.dart';
@@ -20,6 +21,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
   final FirebaseAuthService _auth = FirebaseAuthService();
   final UserService _userService = UserService();
+  final FavoritesService _favoritesService = FavoritesService();
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -126,6 +128,7 @@ class _SignUpPageState extends State<SignUpPage> {
 
       if (fbUser != null) {
         bool result = await _userService.saveUser(user);
+        await _favoritesService.createFavoritesMovies(user.email);
         if (result) {
           Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) => const HomePage()), (route) => false);
         }

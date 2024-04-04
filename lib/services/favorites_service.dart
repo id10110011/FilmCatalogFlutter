@@ -26,6 +26,10 @@ class FavoritesService {
     return movies;
   }
 
+  Future<void> createFavoritesMovies(String? email) async {
+    return await _favoritesCollection.doc(email).set({"refArray": List<DocumentReference>.empty(growable: true)});
+  }
+
   Future<void> saveFavoritesMovies(List<DocumentReference> docs, String? email) async {
     return await _favoritesCollection.doc(email).set({"refArray": docs});
   }
