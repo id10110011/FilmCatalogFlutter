@@ -33,4 +33,9 @@ class FavoritesService {
   Future<void> saveFavoritesMovies(List<DocumentReference> docs, String? email) async {
     return await _favoritesCollection.doc(email).set({"refArray": docs});
   }
+
+  Future<bool> deleteFavoriteDoc(String? email) async {
+    return _favoritesCollection.doc(email).delete()
+        .then((value) => true);
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:film_catalog_flutter/models/user.dart';
 import 'package:film_catalog_flutter/services/auth_service.dart';
+import 'package:film_catalog_flutter/services/favorites_service.dart';
 import 'package:film_catalog_flutter/services/user_service.dart';
 import 'package:film_catalog_flutter/ui/pages/profile/edit_profile_page.dart';
 import 'package:flutter/material.dart';
@@ -17,6 +18,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   final FirebaseAuthService _auth = FirebaseAuthService();
   final UserService _userService = UserService();
+  final FavoritesService _favoritesService = FavoritesService();
 
   User _user = User.empty();
 
@@ -41,6 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void _deleteUserOnPressed() async {
     bool result = await _userService.deleteUser(_user.email);
     if (result) {
+      await _favoritesService.deleteFavoriteDoc(_user.email);
       _auth.deleteUser();
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (context) =>
         const LoginPage()), (route) => false);
