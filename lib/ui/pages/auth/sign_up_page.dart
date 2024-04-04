@@ -120,8 +120,9 @@ class _SignUpPageState extends State<SignUpPage> {
     String name = _nameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
+    String rePassword = _rePasswordController.text;
 
-    if (_validateFields(email, password, name)) {
+    if (_validateFields(email, password, rePassword, name)) {
       User user = User.fromRegistration(email, name);
       firebase.User? fbUser = await _auth.signUpWithEmailAndPassword(
           email, password);
@@ -136,7 +137,7 @@ class _SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  bool _validateFields(String email, String password, String name) {
+  bool _validateFields(String email, String password, String rePassword, String name) {
     String? result = Validator.validateEmail(email);
     if (result != null) {
       showToast(message: result);
@@ -150,6 +151,10 @@ class _SignUpPageState extends State<SignUpPage> {
     result = Validator.validatePassword(password);
     if (result != null) {
       showToast(message: result);
+      return false;
+    }
+    if (rePassword != password) {
+      showToast(message: "Passwords must be same");
       return false;
     }
     return true;

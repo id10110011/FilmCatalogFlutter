@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:film_catalog_flutter/services/movies_service.dart';
 import 'package:flutter/material.dart';
 
 import '../../../models/movie.dart';
@@ -18,19 +19,20 @@ class MovieDetailsPage extends StatefulWidget {
 class _MovieDetailsPageState extends State<MovieDetailsPage> {
   final FavoritesService _favoritesService = FavoritesService();
   final FirebaseAuthService _auth = FirebaseAuthService();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final MovieService _movieService = MovieService();
 
-  List<DocumentReference> _favoritesDocs = List.empty();
+  List<DocumentReference> _favoritesDocs = List.empty(growable: true);
 
   void _backOnPressed() {
     Navigator.pop(context);
   }
 
-  void _addToFavorites() {
+  void _addToFavorites() async {
     if (_favoritesDocs.any((e) => e.id == widget.movie.docName)) {
       _favoritesDocs.removeWhere((e) => e.id == widget.movie.docName);
     } else {
-      _favoritesDocs.add(_firestore.doc(widget.movie.docName));
+      DocumentSnapshot<Object?> doc = await _movieService.getMovie(widget.movie.docName);
+      _favoritesDocs.add(doc.reference);
     }
     _favoritesService.saveFavoritesMovies(_favoritesDocs, _auth.getCurrentUser()?.email);
     setState(() {

@@ -7,9 +7,8 @@ class MovieService {
   final CollectionReference _moviesCollection =
       FirebaseFirestore.instance.collection("movies");
 
-  Future<Movie?> getMovie(String docName) async {
-    DocumentSnapshot<Object?> result = await _moviesCollection.doc(docName).get();
-    return MovieConverter.movieFromSnapshot(result);
+  Future<DocumentSnapshot<Object?>> getMovie(String docName) async {
+    return await _moviesCollection.doc(docName).get();
   }
 
   Future<List<DocumentReference>> getMovieReferences() async {
